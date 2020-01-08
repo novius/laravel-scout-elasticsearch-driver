@@ -1,0 +1,26 @@
+<?php
+
+namespace DummyNamespace;
+
+use Novius\ScoutElastic\IndexConfigurator;
+use Novius\ScoutElastic\Migratable;
+
+class DummyClass extends IndexConfigurator
+{
+    use Migratable;
+
+    /**
+     * @var array
+     */
+    protected $settings = [
+        //
+    ];
+
+    protected $defaultMapping = [
+        'properties' => [
+            'type' => [
+                'type' => 'keyword',
+            ],
+        ],
+    ];
+}

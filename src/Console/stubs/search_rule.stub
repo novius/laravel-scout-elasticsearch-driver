@@ -1,0 +1,24 @@
+<?php
+
+namespace DummyNamespace;
+
+use Novius\ScoutElastic\SearchRule;
+
+class DummyClass extends SearchRule
+{
+    /**
+     * @inheritdoc
+     */
+    public function buildHighlightPayload()
+    {
+        //
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildQueryPayload()
+    {
+        //
+    }
+}
