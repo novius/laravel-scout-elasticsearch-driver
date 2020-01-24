@@ -24,6 +24,53 @@ foreach ($results as $result) {
 }
 ```
 
+* Logs : you can now use Laravel loggers to log ElasticSearch's requests
+
+To enable logs you have to set `SCOUT_ELASTIC_LOG_ENABLED` to `true` and specify which log's channel(s) to use.
+
+Example :
+
+***config/logging.php***
+```php
+<?php
+
+return [
+
+    ...
+    
+    'channels' => [
+
+        ...
+
+        'es' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/es.log'),
+            'level' => 'debug',
+            'days' => 5,
+        ],
+    ],
+];
+```
+
+***config/scout_elastic.php***
+```php
+<?php
+
+return [
+    'client' => [
+        'hosts' => [
+            env('SCOUT_ELASTIC_HOST', 'localhost:9200'),
+        ],
+    ],
+    'indexer' => env('SCOUT_ELASTIC_INDEXER', 'single'),
+    'document_refresh' => env('SCOUT_ELASTIC_DOCUMENT_REFRESH'),
+    'log_enabled' => env('SCOUT_ELASTIC_LOG_ENABLED', false),
+    'log_channels' => [
+        'es',
+    ],
+];
+```
+
 ## Features deleted from original package
 
 * `elastic:update-mapping` command ;

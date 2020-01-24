@@ -3,7 +3,9 @@
 namespace Novius\ScoutElastic;
 
 use Elasticsearch\ClientBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use Laravel\Scout\EngineManager;
@@ -63,6 +65,13 @@ class ScoutElasticServiceProvider extends ServiceProvider
             ->app
             ->singleton('scout_elastic.client', function () {
                 $config = Config::get('scout_elastic.client');
+
+                $logChannels = config('scout_elastic.log_channels', []);
+                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && !empty($logChannels)) {
+                    $config['logger'] = Log::stack($logChannels);
+                } else {
+                    Arr::forget($config, 'logger');
+                }
 
                 return ClientBuilder::fromConfig($config);
             });
