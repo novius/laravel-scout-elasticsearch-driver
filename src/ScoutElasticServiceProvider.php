@@ -67,7 +67,7 @@ class ScoutElasticServiceProvider extends ServiceProvider
                 $config = Config::get('scout_elastic.client');
 
                 $logChannels = config('scout_elastic.log_channels', []);
-                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && !empty($logChannels)) {
+                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && ! empty($logChannels)) {
                     $config['logger'] = Log::stack($logChannels);
                 } else {
                     Arr::forget($config, 'logger');
