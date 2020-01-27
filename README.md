@@ -7,8 +7,6 @@ This package is an adaptation of [babenkoivan/scout-elasticsearch-driver ](https
 
 This package version was created to be compatible with [Elasticsearch "Removal of mapping types"](https://www.elastic.co/guide/en/elasticsearch/reference/7.x/removal-of-types.html#removal-of-types) introduced in Elasticsearch >= 7.0.0
 
-> **WARNING**: this package is currently in development.
-
 ## Features added
 
 * Model's type is now saved in `type` field by default according to [Elasticsearch recommendations](https://www.elastic.co/guide/en/elasticsearch/reference/7.x/removal-of-types.html#_custom_type_field)
