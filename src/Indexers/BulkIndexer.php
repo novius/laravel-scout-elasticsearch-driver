@@ -2,7 +2,8 @@
 
 namespace Novius\ScoutElastic\Indexers;
 
-use Novius\ScoutElastic\Migratable;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Novius\ScoutElastic\Payloads\RawPayload;
 use Novius\ScoutElastic\Payloads\TypePayload;
 use Novius\ScoutElastic\Facades\ElasticClient;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BulkIndexer implements IndexerInterface
 {
+    use HasConfigurator;
     /**
      * {@inheritdoc}
      */
@@ -17,12 +19,19 @@ class BulkIndexer implements IndexerInterface
     {
         $model = $models->first();
         $indexConfigurator = $model->getIndexConfigurator();
-
-        $bulkPayload = new TypePayload($model);
-
-        if (in_array(Migratable::class, class_uses_recursive($indexConfigurator))) {
-            $bulkPayload->useAlias('write');
+        $this->configurator = $indexConfigurator;
+        try {
+            // Use name of new index created by elastic:create-index command
+            $indexName = resolve('elasticIndexCreated');
+        } catch (BindingResolutionException $e) {
+            $indexName = $indexConfigurator->getName();
         }
+
+        if (! $this->aliasAlreadyExists()) {
+            throw new \Exception(sprintf('ES indice with aliase %s does not exists. Please run elastic:create-index command before.', $indexConfigurator->getName()));
+        }
+
+        $bulkPayload = (new TypePayload($model))->useIndex($indexName);
 
         if ($documentRefresh = config('scout_elastic.document_refresh')) {
             $bulkPayload->set('refresh', $documentRefresh);
@@ -62,6 +71,12 @@ class BulkIndexer implements IndexerInterface
     public function delete(Collection $models)
     {
         $model = $models->first();
+        $indexConfigurator = $model->getIndexConfigurator();
+        $this->configurator = $indexConfigurator;
+
+        if (! $this->aliasAlreadyExists()) {
+            return;
+        }
 
         $bulkPayload = new TypePayload($model);
 

@@ -7,14 +7,14 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use InvalidArgumentException;
 use Laravel\Scout\EngineManager;
 use Novius\ScoutElastic\Console\ElasticIndexCreateCommand;
 use Novius\ScoutElastic\Console\ElasticIndexDropCommand;
-use Novius\ScoutElastic\Console\ElasticIndexUpdateCommand;
+use Novius\ScoutElastic\Console\ElasticIndexReindexCommand;
 use Novius\ScoutElastic\Console\IndexConfiguratorMakeCommand;
 use Novius\ScoutElastic\Console\SearchableModelMakeCommand;
 use Novius\ScoutElastic\Console\SearchRuleMakeCommand;
+use Novius\ScoutElastic\Indexers\BulkIndexer;
 
 class ScoutElasticServiceProvider extends ServiceProvider
 {
@@ -32,25 +32,15 @@ class ScoutElasticServiceProvider extends ServiceProvider
 
             // elastic commands
             ElasticIndexCreateCommand::class,
-            ElasticIndexUpdateCommand::class,
             ElasticIndexDropCommand::class,
+            ElasticIndexReindexCommand::class,
         ]);
 
         $this
             ->app
             ->make(EngineManager::class)
             ->extend('elastic', function () {
-                $indexerType = config('scout_elastic.indexer', 'single');
-                $indexerClass = '\\Novius\\ScoutElastic\\Indexers\\'.ucfirst($indexerType).'Indexer';
-
-                if (! class_exists($indexerClass)) {
-                    throw new InvalidArgumentException(sprintf(
-                        'The %s indexer doesn\'t exist.',
-                        $indexerType
-                    ));
-                }
-
-                return new ElasticEngine(new $indexerClass());
+                return new ElasticEngine(new BulkIndexer());
             });
     }
 

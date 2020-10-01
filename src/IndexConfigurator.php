@@ -32,11 +32,11 @@ abstract class IndexConfigurator
      *
      * @return string
      */
-    public function getName()
+    public function getName($withDateSuffix = false)
     {
         $name = $this->name ?? Str::snake(str_replace('IndexConfigurator', '', class_basename($this)));
 
-        return config('scout.prefix').$name;
+        return config('scout.prefix').$name.($withDateSuffix ? '_'.date('Y-m-d_H-i-s') : '');
     }
 
     /**

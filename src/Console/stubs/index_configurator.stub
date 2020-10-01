@@ -3,17 +3,53 @@
 namespace DummyNamespace;
 
 use Novius\ScoutElastic\IndexConfigurator;
-use Novius\ScoutElastic\Migratable;
 
 class DummyClass extends IndexConfigurator
 {
-    use Migratable;
-
     /**
      * @var array
      */
     protected $settings = [
-        //
+        'analysis' => [
+            'filter' => [
+                'french_elision' => [
+                    'type' => 'elision',
+                    'articles_case' => true,
+                    'articles' => [
+                        'l', 'm', 't', 'qu', 'n', 's',
+                        'j', 'd', 'c', 'jusqu', 'quoiqu',
+                        'lorsqu', 'puisqu',
+                    ],
+                ],
+                'french_stop' => [
+                    'type' => 'stop',
+                    'stopwords' => '_french_',
+                ],
+                'french_stemmer' => [
+                    'type' => 'stemmer',
+                    'language' => 'light_french',
+                ],
+            ],
+            'analyzer' => [
+                'french_heavy' => [
+                    'tokenizer' => 'icu_tokenizer',
+                    'filter' => [
+                        'french_elision', // remove selected prefix chars
+                        'icu_folding', // no accents, specials chars etc
+                        'lowercase',
+                        'french_stemmer', // delete plurals
+                    ],
+                ],
+                'french_light' => [
+                    'tokenizer' => 'icu_tokenizer',
+                    'filter' => [
+                        'french_elision', // remove selected prefix chars
+                        'icu_folding', // no accents, specials chars etc
+                        'lowercase',
+                    ],
+                ],
+            ],
+        ],
     ];
 
     protected $defaultMapping = [

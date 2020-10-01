@@ -4,7 +4,6 @@ namespace Novius\ScoutElastic\Console\Features;
 
 use InvalidArgumentException;
 use Novius\ScoutElastic\IndexConfigurator;
-use Symfony\Component\Console\Input\InputArgument;
 
 trait RequiresIndexConfiguratorArgument
 {
@@ -28,21 +27,5 @@ trait RequiresIndexConfiguratorArgument
         }
 
         return new $configuratorClass;
-    }
-
-    /**
-     * Get the arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            [
-                'index-configurator',
-                InputArgument::REQUIRED,
-                'The index configurator class',
-            ],
-        ];
     }
 }
