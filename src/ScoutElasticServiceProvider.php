@@ -11,7 +11,6 @@ use Laravel\Scout\EngineManager;
 use Novius\ScoutElastic\Console\ElasticIndexCreateCommand;
 use Novius\ScoutElastic\Console\ElasticIndexDropCommand;
 use Novius\ScoutElastic\Console\ElasticIndexReindexCommand;
-use Novius\ScoutElastic\Console\ElasticIndexUpdateCommand;
 use Novius\ScoutElastic\Console\IndexConfiguratorMakeCommand;
 use Novius\ScoutElastic\Console\SearchableModelMakeCommand;
 use Novius\ScoutElastic\Console\SearchRuleMakeCommand;
@@ -58,7 +57,7 @@ class ScoutElasticServiceProvider extends ServiceProvider
                 $config = Config::get('scout_elastic.client');
 
                 $logChannels = config('scout_elastic.log_channels', []);
-                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && !empty($logChannels)) {
+                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && ! empty($logChannels)) {
                     $config['logger'] = Log::stack($logChannels);
                 } else {
                     Arr::forget($config, 'logger');

@@ -25,19 +25,18 @@ class ElasticIndexReindexCommand extends Command
     {
         $this->configurator = $this->getIndexConfigurator();
         $alias = $this->configurator->getName();
+        $this->info(sprintf('Searching for existing alias : %s.', $alias));
 
         if (! $this->aliasAlreadyExists()) {
-            $this->call('elastic:create-index', [
-                'index-configurator' => $this->argument('index-configurator'),
-            ]);
+            $this->info(sprintf('No index found for alias : %s.', $alias));
         } else {
             $currentIndex = $this->findIndexNameByAlias($alias);
             $this->info(sprintf('An index already exists : %s. Create another.', $currentIndex));
-
-            $this->call('elastic:create-index', [
-                'index-configurator' => $this->argument('index-configurator'),
-                '--populate' => 1,
-            ]);
         }
+
+        $this->call('elastic:create-index', [
+            'index-configurator' => $this->argument('index-configurator'),
+            '--populate' => 1,
+        ]);
     }
 }

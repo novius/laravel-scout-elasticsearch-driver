@@ -25,6 +25,8 @@ class ElasticIndexCreateCommand extends Command
      */
     protected $indexName = '';
 
+    protected $aliasCreated = false;
+
     /**
      * Handle the command.
      *
@@ -43,7 +45,18 @@ class ElasticIndexCreateCommand extends Command
 
         $this->createIndex();
 
+        if (! $aliasAlreadyExists) {
+            $this->createAlias();
+        }
+
         if ($this->option('populate')) {
+            if ($aliasAlreadyExists) {
+                // Hack to populate the good index (the newest) instead of the current with alias
+                app()->bind('elasticIndexCreated', function () {
+                    return $this->indexName;
+                });
+            }
+
             collect(config('scout_elastic.searchable_models', []))
                 ->filter(function ($indexableClass) {
                     $model = new $indexableClass;
@@ -56,7 +69,7 @@ class ElasticIndexCreateCommand extends Command
                 });
         }
 
-        if ($aliasAlreadyExists) {
+        if ($aliasAlreadyExists && ! $this->aliasCreated) {
             $oldIndex = $this->findIndexNameByAlias($this->configurator->getName());
             $payloadDeleteOldIndex = (new RawPayload())
                 ->set('index', $oldIndex)
@@ -68,7 +81,9 @@ class ElasticIndexCreateCommand extends Command
             $this->info(sprintf('The old index %s was deleted.', $oldIndex));
         }
 
-        $this->createAlias();
+        if (! $this->aliasCreated) {
+            $this->createAlias();
+        }
     }
 
     /**
@@ -115,5 +130,7 @@ class ElasticIndexCreateCommand extends Command
             $this->configurator->getName(),
             $this->indexName
         ));
+
+        $this->aliasCreated = true;
     }
 }

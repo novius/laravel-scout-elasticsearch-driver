@@ -2,6 +2,7 @@
 
 namespace Novius\ScoutElastic\Indexers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Novius\ScoutElastic\Payloads\RawPayload;
 use Novius\ScoutElastic\Payloads\TypePayload;
@@ -19,12 +20,18 @@ class BulkIndexer implements IndexerInterface
         $model = $models->first();
         $indexConfigurator = $model->getIndexConfigurator();
         $this->configurator = $indexConfigurator;
+        try {
+            // Use name of new index created by elastic:create-index command
+            $indexName = resolve('elasticIndexCreated');
+        } catch (BindingResolutionException $e) {
+            $indexName = $indexConfigurator->getName();
+        }
 
         if (! $this->aliasAlreadyExists()) {
             throw new \Exception(sprintf('ES indice with aliase %s does not exists. Please run elastic:create-index command before.', $indexConfigurator->getName()));
         }
 
-        $bulkPayload = (new TypePayload($model))->useIndex($indexConfigurator->getName());
+        $bulkPayload = (new TypePayload($model))->useIndex($indexName);
 
         if ($documentRefresh = config('scout_elastic.document_refresh')) {
             $bulkPayload->set('refresh', $documentRefresh);
