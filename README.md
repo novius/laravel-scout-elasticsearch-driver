@@ -63,6 +63,7 @@ return [
         ],
     ],
     'document_refresh' => env('SCOUT_ELASTIC_DOCUMENT_REFRESH'),
+    'searchable_models' => [],
     'log_enabled' => env('SCOUT_ELASTIC_LOG_ENABLED', false),
     'log_channels' => [],
 ];
@@ -78,9 +79,11 @@ return [
 
 ## Requirements
 
-* PHP >= 7.2
-* Laravel Framework >= 5.8
+* PHP >= 7.3
+* Laravel Framework >= 6.0
 * Elasticsearch >= 7.0.0
+
+*For Laravel >= 5.8 and < 6 you can install 1.x version.*
 
 ## Installation
 
