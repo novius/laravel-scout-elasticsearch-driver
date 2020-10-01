@@ -11,7 +11,7 @@ class ElasticIndexReindexCommand extends Command
     use HasConfigurator;
     use RequiresIndexConfiguratorArgument;
 
-    protected $name = 'elastic:reindex
+    protected $signature = 'elastic:reindex
                             {index-configurator : The index configurator class}';
 
     protected $description = 'Reindex an Elasticsearch index with 0 downtime';
