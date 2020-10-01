@@ -32,11 +32,25 @@ class IndexPayload extends RawPayload
      * @param \ScoutElastic\IndexConfigurator $indexConfigurator
      * @return void
      */
-    public function __construct(IndexConfigurator $indexConfigurator)
+    public function __construct(IndexConfigurator $indexConfigurator, $isCreationPayload = false)
     {
         $this->indexConfigurator = $indexConfigurator;
 
-        $this->payload['index'] = $indexConfigurator->getName();
+        $this->payload['index'] = $indexConfigurator->getName($isCreationPayload);
+    }
+
+    /**
+     * Use a specific index.
+     *
+     * @param string $indexName
+     * @return $this
+     * @throws \Exception
+     */
+    public function useIndex(string $indexName)
+    {
+        $this->payload['index'] = $indexName;
+
+        return $this;
     }
 
     /**

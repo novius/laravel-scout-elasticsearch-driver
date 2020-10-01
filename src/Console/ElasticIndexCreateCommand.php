@@ -2,75 +2,28 @@
 
 namespace Novius\ScoutElastic\Console;
 
-use Novius\ScoutElastic\Migratable;
+use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Illuminate\Console\Command;
 use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Payloads\IndexPayload;
 use Novius\ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
+use Novius\ScoutElastic\Payloads\RawPayload;
 
 class ElasticIndexCreateCommand extends Command
 {
+    use HasConfigurator;
     use RequiresIndexConfiguratorArgument;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $name = 'elastic:create-index';
+    protected $signature = 'elastic:create-index
+                            {index-configurator : The index configurator class}
+                            {--populate : populate index with indexable models}';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $description = 'Create an Elasticsearch index';
 
     /**
-     * Create an index.
-     *
-     * @return void
+     * @var string
      */
-    protected function createIndex()
-    {
-        $configurator = $this->getIndexConfigurator();
-
-        $payload = (new IndexPayload($configurator))
-            ->setIfNotEmpty('body.settings', $configurator->getSettings())
-            ->setIfNotEmpty('body.mappings', $configurator->getDefaultMapping())
-            ->get();
-
-        ElasticClient::indices()
-            ->create($payload);
-
-        $this->info(sprintf(
-            'The %s index was created!',
-            $configurator->getName()
-        ));
-    }
-
-    /**
-     * Create an write alias.
-     *
-     * @return void
-     */
-    protected function createWriteAlias()
-    {
-        $configurator = $this->getIndexConfigurator();
-
-        if (! in_array(Migratable::class, class_uses_recursive($configurator))) {
-            return;
-        }
-
-        $payload = (new IndexPayload($configurator))
-            ->set('name', $configurator->getWriteAlias())
-            ->get();
-
-        ElasticClient::indices()
-            ->putAlias($payload);
-
-        $this->info(sprintf(
-            'The %s alias for the %s index was created!',
-            $configurator->getWriteAlias(),
-            $configurator->getName()
-        ));
-    }
+    protected $indexName = '';
 
     /**
      * Handle the command.
@@ -79,8 +32,88 @@ class ElasticIndexCreateCommand extends Command
      */
     public function handle()
     {
+        $this->configurator = $this->getIndexConfigurator();
+        $aliasAlreadyExists = $this->aliasAlreadyExists();
+
+        if ($aliasAlreadyExists && ! $this->option('populate')) {
+            $this->error(sprintf('An index with alias "%s" already exists. Please use elastic:reindex command.', $this->configurator->getName()));
+
+            return;
+        }
+
         $this->createIndex();
 
-        $this->createWriteAlias();
+        if ($this->option('populate')) {
+            collect(config('scout_elastic.searchable_models', []))
+                ->filter(function ($indexableClass) {
+                    $model = new $indexableClass;
+
+                    return method_exists($model, 'getIndexConfigurator') && get_class($model->getIndexConfigurator()) === get_class($this->configurator);
+                })->each(function ($class) {
+                    $this->call('scout:import', [
+                        'model' => $class,
+                    ]);
+                });
+        }
+
+        if ($aliasAlreadyExists) {
+            $oldIndex = $this->findIndexNameByAlias($this->configurator->getName());
+            $payloadDeleteOldIndex = (new RawPayload())
+                ->set('index', $oldIndex)
+                ->get();
+
+            ElasticClient::indices()
+                ->delete($payloadDeleteOldIndex);
+
+            $this->info(sprintf('The old index %s was deleted.', $oldIndex));
+        }
+
+        $this->createAlias();
+    }
+
+    /**
+     * Create an index.
+     *
+     * @return void
+     */
+    protected function createIndex()
+    {
+        $indexCreationPayload = new IndexPayload($this->configurator, true);
+        $this->indexName = $indexCreationPayload->get('index');
+
+        $payload = $indexCreationPayload
+            ->setIfNotEmpty('body.settings', $this->configurator->getSettings())
+            ->setIfNotEmpty('body.mappings', $this->configurator->getDefaultMapping())
+            ->get();
+
+        ElasticClient::indices()
+            ->create($payload);
+
+        $this->info(sprintf(
+            'The %s index was created!',
+            $this->indexName
+        ));
+    }
+
+    /**
+     * Create an write alias.
+     *
+     * @return void
+     */
+    protected function createAlias()
+    {
+        $payload = ((new IndexPayload($this->configurator))
+            ->useIndex($this->indexName))
+            ->set('name', $this->configurator->getName())
+            ->get();
+
+        ElasticClient::indices()
+            ->putAlias($payload);
+
+        $this->info(sprintf(
+            'The %s alias for the %s index was created!',
+            $this->configurator->getName(),
+            $this->indexName
+        ));
     }
 }

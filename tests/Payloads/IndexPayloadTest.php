@@ -21,21 +21,6 @@ class IndexPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testUseAlias()
-    {
-        $indexConfigurator = $this->mockIndexConfigurator([
-            'name' => 'foo',
-        ]);
-
-        $payload = (new IndexPayload($indexConfigurator))
-            ->useAlias('write');
-
-        $this->assertEquals(
-            ['index' => 'foo_write'],
-            $payload->get()
-        );
-    }
-
     public function testSet()
     {
         $indexConfigurator = $this->mockIndexConfigurator([

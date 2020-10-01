@@ -215,7 +215,7 @@ class ElasticEngine extends Engine
             ->each(function ($payload) use (&$count) {
                 $result = ElasticClient::count($payload);
 
-                $count = $result['count'];
+                $count = $result['count'] ?? 0;
 
                 if ($count > 0) {
                     return false;
@@ -305,7 +305,7 @@ class ElasticEngine extends Engine
      */
     public function getTotalCount($results)
     {
-        return $results['hits']['total']['value'];
+        return $results['hits']['total']['value'] ?? 0;
     }
 
     /**

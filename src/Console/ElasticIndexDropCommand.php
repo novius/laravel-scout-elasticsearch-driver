@@ -3,24 +3,19 @@
 namespace Novius\ScoutElastic\Console;
 
 use Illuminate\Console\Command;
-use Novius\ScoutElastic\Facades\ElasticClient;
-use Novius\ScoutElastic\IndexConfigurator;
-use Novius\ScoutElastic\Migratable;
+use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Novius\ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
+use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Payloads\RawPayload;
 
 class ElasticIndexDropCommand extends Command
 {
+    use HasConfigurator;
     use RequiresIndexConfiguratorArgument;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $name = 'elastic:drop-index';
+    protected $signature = 'elastic:drop-index
+                            {index-configurator : The index configurator class}';
 
-    /**
-     * {@inheritdoc}
-     */
     protected $description = 'Drop an Elasticsearch index';
 
     /**
@@ -30,8 +25,20 @@ class ElasticIndexDropCommand extends Command
      */
     public function handle()
     {
-        $configurator = $this->getIndexConfigurator();
-        $indexName = $this->resolveIndexName($configurator);
+        $this->configurator = $this->getIndexConfigurator();
+        $alias = $this->configurator->getName();
+
+        if (! $this->aliasAlreadyExists()) {
+            $this->error(sprintf('There is no index with alias "%s".', $alias));
+
+            return;
+        }
+
+        $indexName = $this->findIndexNameByAlias($this->configurator->getName());
+
+        if (! $this->confirm(sprintf('This command will remove "%s" index. Do you wish to continue?', $alias))) {
+            return;
+        }
 
         $payload = (new RawPayload())
             ->set('index', $indexName)
@@ -42,27 +49,7 @@ class ElasticIndexDropCommand extends Command
 
         $this->info(sprintf(
             'The index %s was deleted!',
-            $indexName
+            $alias
         ));
-    }
-
-    /**
-     * @param IndexConfigurator $configurator
-     * @return string
-     */
-    protected function resolveIndexName($configurator)
-    {
-        if (in_array(Migratable::class, class_uses_recursive($configurator))) {
-            $payload = (new RawPayload())
-                ->set('name', $configurator->getWriteAlias())
-                ->get();
-
-            $aliases = ElasticClient::indices()
-                ->getAlias($payload);
-
-            return key($aliases);
-        } else {
-            return $configurator->getName();
-        }
     }
 }

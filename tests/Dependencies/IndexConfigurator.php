@@ -18,7 +18,6 @@ trait IndexConfigurator
                 'getName',
                 'getSettings',
                 'getDefaultMapping',
-                'getWriteAlias',
             ]);
 
         $mock = $this->getMockBuilder(ElasticIndexConfigurator::class)
@@ -32,9 +31,6 @@ trait IndexConfigurator
 
         $mock->method('getDefaultMapping')
              ->willReturn($params['default_mapping'] ?? []);
-
-        $mock->method('getWriteAlias')
-             ->willReturn($name.'_write');
 
         return $mock;
     }

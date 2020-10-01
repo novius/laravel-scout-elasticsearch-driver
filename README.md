@@ -50,6 +50,8 @@ return [
 ];
 ```
 
+* `elastic:reindex` a new command to build and populate a new index with 0 downtime ;
+
 ***config/scout_elastic.php***
 ```php
 <?php
@@ -60,12 +62,9 @@ return [
             env('SCOUT_ELASTIC_HOST', 'localhost:9200'),
         ],
     ],
-    'indexer' => env('SCOUT_ELASTIC_INDEXER', 'single'),
     'document_refresh' => env('SCOUT_ELASTIC_DOCUMENT_REFRESH'),
     'log_enabled' => env('SCOUT_ELASTIC_LOG_ENABLED', false),
-    'log_channels' => [
-        'es',
-    ],
+    'log_channels' => [],
 ];
 ```
 
@@ -73,8 +72,9 @@ return [
 
 * `elastic:update-mapping` command ;
 * `elastic:migrate` command ;
+* `elastic:update` command ;
 * Mapping of models : replaced by `getDefaultMapping()` of index configurator ;
-
+* Single indexer ;
 
 ## Requirements
 
@@ -103,7 +103,6 @@ The available options are:
 Option | Description
 --- | ---
 client | A setting hash to build Elasticsearch client. More information you can find [here](https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/configuration.html#_building_the_client_from_a_configuration_hash). By default the host is set to `localhost:9200`.
-indexer | Set to `single` for the single document indexing and to `bulk` for the bulk document indexing. By default is set to `single`.
 document_refresh | This option controls when updated documents appear in the search results. Can be set to `'true'`, `'false'`, `'wait_for'` or `null`. More details about this option you can find [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-refresh.html). By default set to `null`.
 
 Note, that if you use the bulk document indexing you'll probably want to change the chunk size, you can do that in the `config/scout.php` file.
