@@ -18,7 +18,7 @@
     "laravel/scout": "^7.0|^8.0"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "~2.15.0",
+    "friendsofphp/php-cs-fixer": "^2.19.0",
     "phpunit/phpunit": "^8.0",
     "orchestra/testbench": "^6.3"
   },
@@ -41,7 +41,7 @@
   },
   "scripts": {
     "lint": [
-      "php-cs-fixer fix --config .php_cs -vv --diff --allow-risky=yes --dry-run"
+      "php-cs-fixer fix --config .php-cs-fixer.php -vv --diff --allow-risky=yes --dry-run"
     ],
     "test": "phpunit"
   }
