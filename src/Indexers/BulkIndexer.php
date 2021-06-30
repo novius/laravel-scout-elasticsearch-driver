@@ -20,6 +20,7 @@ class BulkIndexer implements IndexerInterface
         $model = $models->first();
         $indexConfigurator = $model->getIndexConfigurator();
         $this->configurator = $indexConfigurator;
+
         try {
             // Use name of new index created by elastic:create-index command
             $indexName = resolve('elasticIndexCreated');

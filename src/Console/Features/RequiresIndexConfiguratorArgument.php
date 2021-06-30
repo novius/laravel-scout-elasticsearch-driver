@@ -16,7 +16,7 @@ trait RequiresIndexConfiguratorArgument
     {
         $configuratorClass = trim($this->argument('index-configurator'));
 
-        $configuratorInstance = new $configuratorClass;
+        $configuratorInstance = new $configuratorClass();
 
         if (! ($configuratorInstance instanceof IndexConfigurator)) {
             throw new InvalidArgumentException(sprintf(
@@ -26,6 +26,6 @@ trait RequiresIndexConfiguratorArgument
             ));
         }
 
-        return new $configuratorClass;
+        return new $configuratorClass();
     }
 }

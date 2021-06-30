@@ -63,7 +63,7 @@ trait Searchable
             }
 
             $indexConfiguratorClass = $this->indexConfigurator;
-            $indexConfigurator = new $indexConfiguratorClass;
+            $indexConfigurator = new $indexConfiguratorClass();
         }
 
         return $indexConfigurator;
@@ -92,9 +92,9 @@ trait Searchable
         $softDelete = static::usesSoftDelete() && config('scout.soft_delete', false);
 
         if ($query == '*') {
-            return new FilterBuilder(new static, $callback, $softDelete);
+            return new FilterBuilder(new static(), $callback, $softDelete);
         } else {
-            return new SearchBuilder(new static, $query, $callback, $softDelete);
+            return new SearchBuilder(new static(), $query, $callback, $softDelete);
         }
     }
 
