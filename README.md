@@ -83,7 +83,7 @@ return [
 * Laravel Framework >= 7.25
 * Elasticsearch >= 7.0.0
 
-* For Laravel > 6 and < 7.25 you can install 2.x version.*
+*For Laravel > 6 and < 7.25 you can install 2.x version.*
 
 ## Installation
 
