@@ -18,7 +18,7 @@ trait RequiresModelArgument
     {
         $modelClass = trim($this->argument('model'));
 
-        $modelInstance = new $modelClass;
+        $modelInstance = new $modelClass();
 
         if (
             ! ($modelInstance instanceof Model) ||

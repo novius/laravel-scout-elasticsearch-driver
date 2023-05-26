@@ -102,6 +102,7 @@ class FilterBuilder extends Builder
                         $field => $value,
                     ],
                 ];
+
                 break;
 
             case '>':
@@ -112,6 +113,7 @@ class FilterBuilder extends Builder
                         ],
                     ],
                 ];
+
                 break;
 
             case '<':
@@ -122,6 +124,7 @@ class FilterBuilder extends Builder
                         ],
                     ],
                 ];
+
                 break;
 
             case '>=':
@@ -132,6 +135,7 @@ class FilterBuilder extends Builder
                         ],
                     ],
                 ];
+
                 break;
 
             case '<=':
@@ -142,6 +146,7 @@ class FilterBuilder extends Builder
                         ],
                     ],
                 ];
+
                 break;
 
             case '!=':
@@ -151,6 +156,7 @@ class FilterBuilder extends Builder
                         $field => $value,
                     ],
                 ];
+
                 break;
         }
 

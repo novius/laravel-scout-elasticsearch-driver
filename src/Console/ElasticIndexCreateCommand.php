@@ -59,7 +59,7 @@ class ElasticIndexCreateCommand extends Command
 
             collect(config('scout_elastic.searchable_models', []))
                 ->filter(function ($indexableClass) {
-                    $model = new $indexableClass;
+                    $model = new $indexableClass();
 
                     return method_exists($model, 'getIndexConfigurator') && get_class($model->getIndexConfigurator()) === get_class($this->configurator);
                 })->each(function ($class) {
