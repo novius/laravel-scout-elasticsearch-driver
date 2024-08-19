@@ -20,7 +20,7 @@ trait HasConfigurator
             ->set('name', $alias)
             ->get();
 
-        if ($indices->existsAlias($existsPayload)) {
+        if ($indices->existsAlias($existsPayload)->asBool()) {
             return true;
         }
 
