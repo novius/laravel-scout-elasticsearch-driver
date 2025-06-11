@@ -2,6 +2,7 @@
 
 namespace Novius\ScoutElastic\Builders;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Laravel\Scout\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
@@ -169,14 +170,18 @@ class FilterBuilder extends Builder
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      *
      * @param string $field
-     * @param array $value
+     * @param array|Arrayable $values
      * @return $this
      */
-    public function whereIn($field, array $value)
+    public function whereIn($field, $values)
     {
+        if ($values instanceof Arrayable) {
+            $values = $values->toArray();
+        }
+
         $this->wheres['must'][] = [
             'terms' => [
-                $field => $value,
+                $field => $values,
             ],
         ];
 
@@ -189,14 +194,18 @@ class FilterBuilder extends Builder
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      *
      * @param string $field
-     * @param array $value
+     * @param array|Arrayable $value
      * @return $this
      */
-    public function whereNotIn($field, array $value)
+    public function whereNotIn($field, array $values)
     {
+        if ($values instanceof Arrayable) {
+            $values = $values->toArray();
+        }
+
         $this->wheres['must_not'][] = [
             'terms' => [
-                $field => $value,
+                $field => $values,
             ],
         ];
 
