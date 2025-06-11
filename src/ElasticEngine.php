@@ -142,7 +142,7 @@ class ElasticEngine extends Engine
         $this
             ->buildSearchQueryPayloadCollection($builder, $options)
             ->each(function ($payload) use (&$results) {
-                $results = ElasticClient::search($payload);
+                $results = ElasticClient::search($payload)->asArray();
 
                 $results['_payload'] = $payload;
 
