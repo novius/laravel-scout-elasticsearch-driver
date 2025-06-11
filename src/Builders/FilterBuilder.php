@@ -197,7 +197,7 @@ class FilterBuilder extends Builder
      * @param array|Arrayable $value
      * @return $this
      */
-    public function whereNotIn($field, array $values)
+    public function whereNotIn($field, $values)
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
