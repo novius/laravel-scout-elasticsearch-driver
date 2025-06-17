@@ -6,7 +6,7 @@ use Novius\ScoutElastic\Highlight;
 
 class HighlightTest extends AbstractTestCase
 {
-    public function testGetter()
+    public function test_getter()
     {
         $highlight = new Highlight([
             'title' => ['Title snippet 1'],

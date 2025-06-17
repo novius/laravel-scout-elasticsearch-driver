@@ -3,35 +3,30 @@
 namespace Novius\ScoutElastic\Payloads;
 
 use Exception;
-use Novius\ScoutElastic\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Novius\ScoutElastic\Searchable;
+use RuntimeException;
 
 class TypePayload extends IndexPayload
 {
     /**
      * The model.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $model;
+    protected Model $model;
 
     /**
-     * TypePayload constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @throws \Exception
-     * @return void
+     * @throws Exception
      */
     public function __construct(Model $model)
     {
-        if (! in_array(Searchable::class, class_uses_recursive($model))) {
-            throw new Exception(sprintf(
+        if (! in_array(Searchable::class, class_uses_recursive($model), true)) {
+            throw new RuntimeException(sprintf(
                 'The %s model must use the %s trait.',
                 get_class($model),
                 Searchable::class
             ));
         }
-
+        /** @var Model&Searchable $model */
         $this->model = $model;
 
         parent::__construct($model->getIndexConfigurator());

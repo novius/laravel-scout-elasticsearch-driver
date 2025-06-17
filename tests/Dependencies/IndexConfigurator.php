@@ -7,7 +7,7 @@ use Novius\ScoutElastic\IndexConfigurator as ElasticIndexConfigurator;
 trait IndexConfigurator
 {
     /**
-     * @param array $params Available parameters: name, settings, default_mapping, methods.
+     * @param  array  $params  Available parameters: name, settings, default_mapping, methods.
      * @return ElasticIndexConfigurator
      */
     public function mockIndexConfigurator(array $params = [])
@@ -15,22 +15,22 @@ trait IndexConfigurator
         $name = $params['name'] ?? 'test';
 
         $methods = array_merge($params['methods'] ?? [], [
-                'getName',
-                'getSettings',
-                'getDefaultMapping',
-            ]);
+            'getName',
+            'getSettings',
+            'getDefaultMapping',
+        ]);
 
         $mock = $this->getMockBuilder(ElasticIndexConfigurator::class)
-                     ->setMethods($methods)->getMock();
+            ->onlyMethods($methods)->getMock();
 
         $mock->method('getName')
-             ->willReturn($name);
+            ->willReturn($name);
 
         $mock->method('getSettings')
-             ->willReturn($params['settings'] ?? []);
+            ->willReturn($params['settings'] ?? []);
 
         $mock->method('getDefaultMapping')
-             ->willReturn($params['default_mapping'] ?? []);
+            ->willReturn($params['default_mapping'] ?? []);
 
         return $mock;
     }

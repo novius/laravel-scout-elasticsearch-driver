@@ -24,7 +24,7 @@ class SearchRuleMakeCommand extends GeneratorCommand
     /**
      * {@inheritdoc}
      */
-    public function getStub()
+    public function getStub(): string
     {
         return __DIR__.'/stubs/search_rule.stub';
     }

@@ -2,23 +2,25 @@
 
 namespace Novius\ScoutElastic\Console\Features;
 
-use Novius\ScoutElastic\Searchable;
-use InvalidArgumentException;
+use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
+use Novius\ScoutElastic\Searchable;
 use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * @mixin Command
+ */
 trait RequiresModelArgument
 {
     /**
      * Get the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    protected function getModel()
+    protected function getModel(): Model
     {
         $modelClass = trim($this->argument('model'));
 
-        $modelInstance = new $modelClass();
+        $modelInstance = new $modelClass;
 
         if (
             ! ($modelInstance instanceof Model) ||
@@ -37,10 +39,8 @@ trait RequiresModelArgument
 
     /**
      * Get the arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             [

@@ -10,7 +10,7 @@ trait Model
     use IndexConfigurator;
 
     /**
-     * @param array $params Available parameters: key, searchable_as, searchable_array, index_configurator, methods.
+     * @param  array  $params  Available parameters: key, searchable_as, searchable_array, index_configurator, methods.
      * @return Searchable
      */
     public function mockModel(array $params = [])
@@ -29,7 +29,7 @@ trait Model
 
         $mock = $this
             ->getMockBuilder(StubModel::class)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->getMock();
 
         $mock
@@ -38,7 +38,7 @@ trait Model
 
         $mock
             ->method('getScoutKey')
-            ->willReturn($params['key'] ?? 1);
+            ->willReturn($params['key'] ?? '');
 
         $mock
             ->method('trashed')

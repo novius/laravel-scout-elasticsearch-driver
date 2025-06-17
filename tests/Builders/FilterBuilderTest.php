@@ -10,7 +10,7 @@ class FilterBuilderTest extends AbstractTestCase
 {
     use Model;
 
-    public function testCreationWithSoftDelete()
+    public function test_creation_with_soft_delete()
     {
         $builder = new FilterBuilder($this->mockModel(), null, true);
 
@@ -34,7 +34,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testCreationWithoutSoftDelete()
+    public function test_creation_without_soft_delete()
     {
         $builder = new FilterBuilder($this->mockModel(), null, false);
 
@@ -53,7 +53,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereEq()
+    public function test_where_eq()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', 0)
@@ -72,7 +72,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereNotEq()
+    public function test_where_not_eq()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', '!=', 'bar');
@@ -90,7 +90,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGt()
+    public function test_where_gt()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', '>', 0);
@@ -107,7 +107,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGte()
+    public function test_where_gte()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', '>=', 0);
@@ -124,7 +124,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereLt()
+    public function test_where_lt()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', '<', 0);
@@ -141,7 +141,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereLte()
+    public function test_where_lte()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->where('foo', '>=', 0);
@@ -158,7 +158,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereIn()
+    public function test_where_in()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereIn('foo', [0, 1]);
@@ -175,7 +175,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereNotIn()
+    public function test_where_not_in()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereNotIn('foo', [0, 1]);
@@ -193,7 +193,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereBetween()
+    public function test_where_between()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereBetween('foo', [0, 10]);
@@ -210,7 +210,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereNotBetween()
+    public function test_where_not_between()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereNotBetween('foo', [0, 10]);
@@ -228,7 +228,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereExists()
+    public function test_where_exists()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereExists('foo');
@@ -245,7 +245,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereNotExists()
+    public function test_where_not_exists()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereNotExists('foo');
@@ -263,7 +263,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereRegexp()
+    public function test_where_regexp()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereRegexp('foo', '.*')
@@ -282,7 +282,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhen()
+    public function test_when()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->when(
@@ -320,7 +320,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGeoDistance()
+    public function test_where_geo_distance()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereGeoDistance('foo', [-20, 30], '10m');
@@ -337,7 +337,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGeoBoundingBox()
+    public function test_where_geo_bounding_box()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereGeoBoundingBox('foo', ['top_left' => [-5, 10], 'bottom_right' => [-20, 30]]);
@@ -354,7 +354,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGeoPolygon()
+    public function test_where_geo_polygon()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->whereGeoPolygon('foo', [[-70, 40], [-80, 30], [-90, 20]]);
@@ -371,7 +371,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWhereGeoShape()
+    public function test_where_geo_shape()
     {
         $shape = [
             'type' => 'circle',
@@ -406,7 +406,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testOrderBy()
+    public function test_order_by()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->orderBy('foo')
@@ -421,7 +421,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWith()
+    public function test_with()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->with('RelatedModel');
@@ -432,7 +432,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testFrom()
+    public function test_from()
     {
         $builder = new FilterBuilder($this->mockModel());
 
@@ -449,7 +449,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testCollapse()
+    public function test_collapse()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->collapse('foo');
@@ -460,7 +460,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testSelect()
+    public function test_select()
     {
         $builder = (new FilterBuilder($this->mockModel()))
             ->select(['foo', 'bar']);
@@ -471,7 +471,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testWithTrashed()
+    public function test_with_trashed()
     {
         $builder = (new FilterBuilder($this->mockModel(), null, true))
             ->withTrashed()
@@ -493,7 +493,7 @@ class FilterBuilderTest extends AbstractTestCase
         );
     }
 
-    public function testOnlyTrashed()
+    public function test_only_trashed()
     {
         $builder = (new FilterBuilder($this->mockModel(), null, true))
             ->onlyTrashed()

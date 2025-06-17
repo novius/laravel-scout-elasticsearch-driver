@@ -2,11 +2,11 @@
 
 namespace Novius\ScoutElastic\Console;
 
-use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Illuminate\Console\Command;
+use Novius\ScoutElastic\Console\Features\HasConfigurator;
+use Novius\ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
 use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Payloads\IndexPayload;
-use Novius\ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
 use Novius\ScoutElastic\Payloads\RawPayload;
 
 class ElasticIndexCreateCommand extends Command
@@ -59,7 +59,7 @@ class ElasticIndexCreateCommand extends Command
 
             collect(config('scout_elastic.searchable_models', []))
                 ->filter(function ($indexableClass) {
-                    $model = new $indexableClass();
+                    $model = new $indexableClass;
 
                     return method_exists($model, 'getIndexConfigurator') && get_class($model->getIndexConfigurator()) === get_class($this->configurator);
                 })->each(function ($class) {
@@ -71,7 +71,7 @@ class ElasticIndexCreateCommand extends Command
 
         if ($aliasAlreadyExists && ! $this->aliasCreated) {
             $oldIndex = $this->findIndexNameByAlias($this->configurator->getName());
-            $payloadDeleteOldIndex = (new RawPayload())
+            $payloadDeleteOldIndex = (new RawPayload)
                 ->set('index', $oldIndex)
                 ->get();
 

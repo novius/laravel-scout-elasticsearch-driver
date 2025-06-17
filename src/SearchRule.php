@@ -6,17 +6,11 @@ use Novius\ScoutElastic\Builders\SearchBuilder;
 
 class SearchRule
 {
-    /**
-     * The builder.
-     *
-     * @var \ScoutElastic\Builders\SearchBuilder
-     */
-    protected $builder;
+    protected SearchBuilder $builder;
 
     /**
      * SearchRule constructor.
      *
-     * @param \ScoutElastic\Builders\SearchBuilder $builder
      * @return void
      */
     public function __construct(SearchBuilder $builder)
@@ -26,29 +20,21 @@ class SearchRule
 
     /**
      * Check if this is applicable.
-     *
-     * @return bool
      */
-    public function isApplicable()
+    public function isApplicable(): bool
     {
         return true;
     }
 
     /**
      * Build the highlight payload.
-     *
-     * @return array|null
      */
-    public function buildHighlightPayload()
-    {
-    }
+    public function buildHighlightPayload() {}
 
     /**
      * Build the query payload.
-     *
-     * @return array
      */
-    public function buildQueryPayload()
+    public function buildQueryPayload(): array
     {
         return [
             'must' => [

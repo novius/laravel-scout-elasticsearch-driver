@@ -3,6 +3,7 @@
 namespace Novius\ScoutElastic;
 
 use Elastic\Elasticsearch\ClientBuilder;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,10 @@ use Novius\ScoutElastic\Indexers\BulkIndexer;
 
 class ScoutElasticServiceProvider extends ServiceProvider
 {
-    public function boot()
+    /**
+     * @throws BindingResolutionException
+     */
+    public function boot(): void
     {
         $this->publishes([
             __DIR__.'/../config/scout_elastic.php' => config_path('scout_elastic.php'),
@@ -40,16 +44,14 @@ class ScoutElasticServiceProvider extends ServiceProvider
             ->app
             ->make(EngineManager::class)
             ->extend('elastic', function () {
-                return new ElasticEngine(new BulkIndexer());
+                return new ElasticEngine(new BulkIndexer);
             });
     }
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this
             ->app
@@ -57,7 +59,7 @@ class ScoutElasticServiceProvider extends ServiceProvider
                 $config = Config::get('scout_elastic.client');
 
                 $logChannels = config('scout_elastic.log_channels', []);
-                if (config('scout_elastic.log_enabled', false) && is_array($logChannels) && ! empty($logChannels)) {
+                if (is_array($logChannels) && ! empty($logChannels) && config('scout_elastic.log_enabled', false)) {
                     $config['logger'] = Log::stack($logChannels);
                 } else {
                     Arr::forget($config, 'logger');

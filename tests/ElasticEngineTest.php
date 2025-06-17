@@ -2,13 +2,13 @@
 
 namespace Novius\ScoutElastic\Test;
 
-use stdClass;
-use Novius\ScoutElastic\ElasticEngine;
-use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Builders\FilterBuilder;
 use Novius\ScoutElastic\Builders\SearchBuilder;
-use Novius\ScoutElastic\Test\Stubs\SearchRule;
+use Novius\ScoutElastic\ElasticEngine;
+use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Test\Dependencies\Model;
+use Novius\ScoutElastic\Test\Stubs\SearchRule;
+use stdClass;
 
 class ElasticEngineTest extends AbstractTestCase
 {
@@ -26,11 +26,11 @@ class ElasticEngineTest extends AbstractTestCase
         $this->engine = $this
             ->getMockBuilder(ElasticEngine::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
     }
 
-    public function testBuildSearchQueryPayloadCollection()
+    public function test_build_search_query_payload_collection()
     {
         $model = $this->mockModel();
 
@@ -155,7 +155,7 @@ class ElasticEngineTest extends AbstractTestCase
         );
     }
 
-    public function testBuildFilterQueryPayloadCollection()
+    public function test_build_filter_query_payload_collection()
     {
         $model = $this->mockModel();
 
@@ -177,7 +177,7 @@ class ElasticEngineTest extends AbstractTestCase
                         'query' => [
                             'bool' => [
                                 'must' => [
-                                    'match_all' => new stdClass(),
+                                    'match_all' => new stdClass,
                                 ],
                                 'filter' => [
                                     ['term' => ['type' => 'test']],
@@ -203,10 +203,9 @@ class ElasticEngineTest extends AbstractTestCase
         );
     }
 
-    public function testCount()
+    public function test_count()
     {
-        ElasticClient
-            ::shouldReceive('count')
+        ElasticClient::shouldReceive('count')
             ->once()
             ->with([
                 'index' => 'test',
@@ -242,10 +241,9 @@ class ElasticEngineTest extends AbstractTestCase
         $this->addToAssertionCount(1);
     }
 
-    public function testSearchRaw()
+    public function test_search_raw()
     {
-        ElasticClient
-            ::shouldReceive('search')
+        ElasticClient::shouldReceive('search')
             ->once()
             ->with([
                 'index' => 'test',
@@ -278,7 +276,7 @@ class ElasticEngineTest extends AbstractTestCase
         $this->addToAssertionCount(1);
     }
 
-    public function testMapIds()
+    public function test_map_ids()
     {
         $results = [
             'hits' => [
@@ -295,7 +293,7 @@ class ElasticEngineTest extends AbstractTestCase
         );
     }
 
-    public function testMapWithoutTrashed()
+    public function test_map_without_trashed()
     {
         $this->markTestSkipped();
 
@@ -363,7 +361,7 @@ class ElasticEngineTest extends AbstractTestCase
         );
     }
 
-    public function testMapWithTrashed()
+    public function test_map_with_trashed()
     {
         $this->markTestSkipped();
 
@@ -431,7 +429,7 @@ class ElasticEngineTest extends AbstractTestCase
         );
     }
 
-    public function testGetTotalCount()
+    public function test_get_total_count()
     {
         $results = [
             'hits' => [

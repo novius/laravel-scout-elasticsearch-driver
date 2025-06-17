@@ -2,8 +2,8 @@
 
 namespace Novius\ScoutElastic\Test\Builders;
 
-use Novius\ScoutElastic\SearchRule;
 use Novius\ScoutElastic\Builders\SearchBuilder;
+use Novius\ScoutElastic\SearchRule;
 use Novius\ScoutElastic\Test\AbstractTestCase;
 use Novius\ScoutElastic\Test\Dependencies\Model;
 
@@ -11,7 +11,7 @@ class SearchBuilderTest extends AbstractTestCase
 {
     use Model;
 
-    public function testRule()
+    public function test_rule()
     {
         $builder = new SearchBuilder($this->mockModel(), 'qwerty');
 

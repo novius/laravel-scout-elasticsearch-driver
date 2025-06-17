@@ -1,0 +1,19 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+
+    paths:
+        - src/
+
+    # Level 10 is the highest level
+    level: 5
+
+    editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+    editorUrlTitle: '%%file%%:%%line%%'
+
+    ignoreErrors:
+        - identifier: trait.unused
+        - identifier: varTag.unresolvableType
+        - identifier: property.unresolvableType

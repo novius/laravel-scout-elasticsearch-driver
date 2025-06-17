@@ -10,7 +10,7 @@ class TypePayloadTest extends AbstractTestCase
 {
     use Model;
 
-    public function testDefault()
+    public function test_default()
     {
         $model = $this->mockModel();
         $payload = new TypePayload($model);
@@ -23,7 +23,7 @@ class TypePayloadTest extends AbstractTestCase
         );
     }
 
-    public function testSet()
+    public function test_set()
     {
         $indexConfigurator = $this->mockIndexConfigurator([
             'name' => 'foo',

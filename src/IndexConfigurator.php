@@ -8,31 +8,23 @@ abstract class IndexConfigurator
 {
     /**
      * The name.
-     *
-     * @var string
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * The settings.
-     *
-     * @var array
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     /**
      * The default mapping.
-     *
-     * @var array
      */
-    protected $defaultMapping = [];
+    protected array $defaultMapping = [];
 
     /**
-     * Get th name.
-     *
-     * @return string
+     * Get the name.
      */
-    public function getName($withDateSuffix = false)
+    public function getName($withDateSuffix = false): string
     {
         $name = $this->name ?? Str::snake(str_replace('IndexConfigurator', '', class_basename($this)));
 
@@ -41,15 +33,13 @@ abstract class IndexConfigurator
 
     /**
      * Get the settings.
-     *
-     * @return array
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         return $this->settings;
     }
 
-    public function getDefaultMapping()
+    public function getDefaultMapping(): array
     {
         return $this->defaultMapping;
     }

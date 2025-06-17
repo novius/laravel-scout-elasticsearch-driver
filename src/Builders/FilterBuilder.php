@@ -3,12 +3,18 @@
 namespace Novius\ScoutElastic\Builders;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Laravel\Scout\Builder;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
+use Laravel\Scout\Builder;
+use Novius\ScoutElastic\Searchable;
 
 class FilterBuilder extends Builder
 {
+    /** @var Model&Searchable */
+    public $model;
+
     /**
      * The condition array.
      *
@@ -21,42 +27,34 @@ class FilterBuilder extends Builder
 
     /**
      * The with array.
-     *
-     * @var array|string
      */
-    public $with;
+    public array|string|null $with;
 
     /**
      * The offset.
-     *
-     * @var int
      */
-    public $offset;
+    public ?int $offset = null;
 
     /**
      * The collapse parameter.
-     *
-     * @var string
      */
-    public $collapse;
+    public ?string $collapse = null;
 
     /**
      * The select array.
-     *
-     * @var array
      */
-    public $select = [];
+    public array $select = [];
 
     /**
      * FilterBuilder constructor.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param callable|null $callback
-     * @param bool $softDelete
+     * @param  callable|null  $callback
+     * @param  bool  $softDelete
      * @return void
      */
     public function __construct(Model $model, $callback = null, $softDelete = false)
     {
+        /** @var Model&Searchable $model */
         $this->model = $model;
         $this->callback = $callback;
 
@@ -82,16 +80,16 @@ class FilterBuilder extends Builder
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html Range query
      *
      * Supported operators are =, &gt;, &lt;, &gt;=, &lt;=, &lt;&gt;
-     * @param string $field Field name
-     * @param mixed $value Scalar value or an array
-     * @return $this
+     *
+     * @param  string  $field  Field name
+     * @param  mixed  $value  Scalar value or an array
      */
-    public function where($field, $value)
+    public function where($field, $value): static
     {
         $args = func_get_args();
 
-        if (count($args) == 3) {
-            list($field, $operator, $value) = $args;
+        if (count($args) === 3) {
+            [$field, $operator, $value] = $args;
         } else {
             $operator = '=';
         }
@@ -169,11 +167,10 @@ class FilterBuilder extends Builder
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      *
-     * @param string $field
-     * @param array|Arrayable $values
-     * @return $this
+     * @param  string  $field
+     * @param  array|Arrayable  $values
      */
-    public function whereIn($field, $values)
+    public function whereIn($field, $values): static
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -193,11 +190,10 @@ class FilterBuilder extends Builder
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      *
-     * @param string $field
-     * @param array|Arrayable $value
-     * @return $this
+     * @param  string  $field
+     * @param  array|Arrayable  $values
      */
-    public function whereNotIn($field, $values)
+    public function whereNotIn($field, $values): static
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -216,12 +212,8 @@ class FilterBuilder extends Builder
      * Add a whereBetween condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html Range query
-     *
-     * @param string $field
-     * @param array $value
-     * @return $this
      */
-    public function whereBetween($field, array $value)
+    public function whereBetween(string $field, array $value): static
     {
         $this->wheres['must'][] = [
             'range' => [
@@ -239,12 +231,8 @@ class FilterBuilder extends Builder
      * Add a whereNotBetween condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html Range query
-     *
-     * @param string $field
-     * @param array $value
-     * @return $this
      */
-    public function whereNotBetween($field, array $value)
+    public function whereNotBetween(string $field, array $value): static
     {
         $this->wheres['must_not'][] = [
             'range' => [
@@ -262,11 +250,8 @@ class FilterBuilder extends Builder
      * Add a whereExists condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html Exists query
-     *
-     * @param string $field
-     * @return $this
      */
-    public function whereExists($field)
+    public function whereExists(string $field): static
     {
         $this->wheres['must'][] = [
             'exists' => [
@@ -281,11 +266,8 @@ class FilterBuilder extends Builder
      * Add a whereNotExists condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html Exists query
-     *
-     * @param string $field
-     * @return $this
      */
-    public function whereNotExists($field)
+    public function whereNotExists(string $field): static
     {
         $this->wheres['must_not'][] = [
             'exists' => [
@@ -300,13 +282,8 @@ class FilterBuilder extends Builder
      * Add a whereRegexp condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html Regexp query
-     *
-     * @param string $field
-     * @param string $value
-     * @param string $flags
-     * @return $this
      */
-    public function whereRegexp($field, $value, $flags = 'ALL')
+    public function whereRegexp(string $field, string $value, string $flags = 'ALL'): static
     {
         $this->wheres['must'][] = [
             'regexp' => [
@@ -324,13 +301,8 @@ class FilterBuilder extends Builder
      * Add a whereGeoDistance condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html Geo distance query
-     *
-     * @param string $field
-     * @param string|array $value
-     * @param int|string $distance
-     * @return $this
      */
-    public function whereGeoDistance($field, $value, $distance)
+    public function whereGeoDistance(string $field, string|array $value, int|string $distance): static
     {
         $this->wheres['must'][] = [
             'geo_distance' => [
@@ -346,12 +318,8 @@ class FilterBuilder extends Builder
      * Add a whereGeoBoundingBox condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html Geo bounding box query
-     *
-     * @param string $field
-     * @param array $value
-     * @return $this
      */
-    public function whereGeoBoundingBox($field, array $value)
+    public function whereGeoBoundingBox(string $field, array $value): static
     {
         $this->wheres['must'][] = [
             'geo_bounding_box' => [
@@ -366,12 +334,8 @@ class FilterBuilder extends Builder
      * Add a whereGeoPolygon condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-polygon-query.html Geo polygon query
-     *
-     * @param string $field
-     * @param array $points
-     * @return $this
      */
-    public function whereGeoPolygon($field, array $points)
+    public function whereGeoPolygon(string $field, array $points): static
     {
         $this->wheres['must'][] = [
             'geo_polygon' => [
@@ -388,13 +352,8 @@ class FilterBuilder extends Builder
      * Add a whereGeoShape condition.
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-query.html Querying Geo Shapes
-     *
-     * @param string $field
-     * @param array $shape
-     * @param string $relation
-     * @return $this
      */
-    public function whereGeoShape($field, array $shape, $relation = 'INTERSECTS')
+    public function whereGeoShape(string $field, array $shape, string $relation = 'INTERSECTS'): static
     {
         $this->wheres['must'][] = [
             'geo_shape' => [
@@ -411,14 +370,13 @@ class FilterBuilder extends Builder
     /**
      * Add a orderBy clause.
      *
-     * @param string $field
-     * @param string $direction
-     * @return $this
+     * @param  string  $column
+     * @param  string  $direction
      */
-    public function orderBy($field, $direction = 'asc')
+    public function orderBy($column, $direction = 'asc'): static
     {
         $this->orders[] = [
-            $field => strtolower($direction) == 'asc' ? 'asc' : 'desc',
+            $column => strtolower($direction) === 'asc' ? 'asc' : 'desc',
         ];
 
         return $this;
@@ -426,10 +384,8 @@ class FilterBuilder extends Builder
 
     /**
      * Explain the request.
-     *
-     * @return array
      */
-    public function explain()
+    public function explain(): array
     {
         return $this
             ->engine()
@@ -438,10 +394,8 @@ class FilterBuilder extends Builder
 
     /**
      * Profile the request.
-     *
-     * @return array
      */
-    public function profile()
+    public function profile(): array
     {
         return $this
             ->engine()
@@ -450,10 +404,8 @@ class FilterBuilder extends Builder
 
     /**
      * Build the payload.
-     *
-     * @return array
      */
-    public function buildPayload()
+    public function buildPayload(): array
     {
         return $this
             ->engine()
@@ -462,11 +414,8 @@ class FilterBuilder extends Builder
 
     /**
      * Eager load some some relations.
-     *
-     * @param array|string $relations
-     * @return $this
      */
-    public function with($relations)
+    public function with(array|string $relations): static
     {
         $this->with = $relations;
 
@@ -475,21 +424,15 @@ class FilterBuilder extends Builder
 
     /**
      * Set the query offset.
-     *
-     * @param int $offset
-     * @return $this
      */
-    public function from($offset)
+    public function from(int $offset): static
     {
         $this->offset = $offset;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get()
+    public function get(): Collection
     {
         $collection = parent::get();
 
@@ -505,12 +448,13 @@ class FilterBuilder extends Builder
      */
     public function paginate($perPage = null, $pageName = 'page', $page = null)
     {
+        /** @var LengthAwarePaginator $paginator */
         $paginator = parent::paginate($perPage, $pageName, $page);
 
         if (isset($this->with) && $paginator->total() > 0) {
-            $paginator
-                ->getCollection()
-                ->load($this->with);
+            /** @var Collection $collection */
+            $collection = $paginator->getCollection();
+            $collection->load($this->with);
         }
 
         return $paginator;
@@ -518,11 +462,8 @@ class FilterBuilder extends Builder
 
     /**
      * Collapse by a field.
-     *
-     * @param string $field
-     * @return $this
      */
-    public function collapse(string $field)
+    public function collapse(string $field): static
     {
         $this->collapse = $field;
 
@@ -531,11 +472,8 @@ class FilterBuilder extends Builder
 
     /**
      * Select one or many fields.
-     *
-     * @param mixed $fields
-     * @return $this
      */
-    public function select($fields)
+    public function select($fields): static
     {
         $this->select = array_merge(
             $this->select,
@@ -547,10 +485,8 @@ class FilterBuilder extends Builder
 
     /**
      * Get the count.
-     *
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this
             ->engine()

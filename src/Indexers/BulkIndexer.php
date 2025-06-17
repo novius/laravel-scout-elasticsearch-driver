@@ -2,21 +2,31 @@
 
 namespace Novius\ScoutElastic\Indexers;
 
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Novius\ScoutElastic\Console\Features\HasConfigurator;
+use Novius\ScoutElastic\Facades\ElasticClient;
 use Novius\ScoutElastic\Payloads\RawPayload;
 use Novius\ScoutElastic\Payloads\TypePayload;
-use Novius\ScoutElastic\Facades\ElasticClient;
-use Illuminate\Database\Eloquent\Collection;
+use Novius\ScoutElastic\Searchable;
+use RuntimeException;
 
 class BulkIndexer implements IndexerInterface
 {
     use HasConfigurator;
+
     /**
-     * {@inheritdoc}
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     * @throws Exception
      */
-    public function update(Collection $models)
+    public function update(Collection $models): array
     {
+        /** @var Model&Searchable $model */
         $model = $models->first();
         $indexConfigurator = $model->getIndexConfigurator();
         $this->configurator = $indexConfigurator;
@@ -24,12 +34,12 @@ class BulkIndexer implements IndexerInterface
         try {
             // Use name of new index created by elastic:create-index command
             $indexName = resolve('elasticIndexCreated');
-        } catch (BindingResolutionException $e) {
+        } catch (BindingResolutionException) {
             $indexName = $indexConfigurator->getName();
         }
 
         if (! $this->aliasAlreadyExists()) {
-            throw new \Exception(sprintf('ES indice with aliase %s does not exists. Please run elastic:create-index command before.', $indexConfigurator->getName()));
+            throw new RuntimeException(sprintf('ES indice with aliase %s does not exists. Please run elastic:create-index command before.', $indexConfigurator->getName()));
         }
 
         $bulkPayload = (new TypePayload($model))->useIndex($indexName);
@@ -39,6 +49,7 @@ class BulkIndexer implements IndexerInterface
         }
 
         $models->each(function ($model) use ($bulkPayload) {
+            /** @var Model&Searchable $model */
             if ($model::usesSoftDelete() && config('scout.soft_delete', false)) {
                 $model->pushSoftDeleteMetadata();
             }
@@ -51,11 +62,7 @@ class BulkIndexer implements IndexerInterface
                 ]
             );
 
-            if (empty($modelData)) {
-                return true;
-            }
-
-            $actionPayload = (new RawPayload())
+            $actionPayload = (new RawPayload)
                 ->set('index._id', $model->getScoutKey());
 
             $bulkPayload
@@ -63,26 +70,30 @@ class BulkIndexer implements IndexerInterface
                 ->add('body', $modelData);
         });
 
-        ElasticClient::bulk($bulkPayload->get());
+        return ElasticClient::bulk($bulkPayload->get())->asArray();
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     * @throws Exception
      */
-    public function delete(Collection $models)
+    public function delete(Collection $models): array
     {
+        /** @var Model&Searchable $model */
         $model = $models->first();
         $indexConfigurator = $model->getIndexConfigurator();
         $this->configurator = $indexConfigurator;
 
         if (! $this->aliasAlreadyExists()) {
-            return;
+            return [];
         }
 
         $bulkPayload = new TypePayload($model);
 
         $models->each(function ($model) use ($bulkPayload) {
-            $actionPayload = (new RawPayload())
+            /** @var Model&Searchable $model */
+            $actionPayload = (new RawPayload)
                 ->set('delete._id', $model->getScoutKey());
 
             $bulkPayload->add('body', $actionPayload->get());
@@ -90,6 +101,6 @@ class BulkIndexer implements IndexerInterface
 
         $bulkPayload->set('client.ignore', 404);
 
-        ElasticClient::bulk($bulkPayload->get());
+        return ElasticClient::bulk($bulkPayload->get())->asArray();
     }
 }

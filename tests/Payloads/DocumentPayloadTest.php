@@ -2,15 +2,15 @@
 
 namespace Novius\ScoutElastic\Test\Payloads;
 
-use Novius\ScoutElastic\Test\AbstractTestCase;
 use Novius\ScoutElastic\Payloads\DocumentPayload;
+use Novius\ScoutElastic\Test\AbstractTestCase;
 use Novius\ScoutElastic\Test\Dependencies\Model;
 
 class DocumentPayloadTest extends AbstractTestCase
 {
     use Model;
 
-    public function testDefault()
+    public function test_default()
     {
         $model = $this->mockModel();
 
@@ -19,13 +19,13 @@ class DocumentPayloadTest extends AbstractTestCase
         $this->assertEquals(
             [
                 'index' => 'test',
-                'id' => 1,
+                'id' => '',
             ],
             $payload->get()
         );
     }
 
-    public function testSet()
+    public function test_set()
     {
         $indexConfigurator = $this->mockIndexConfigurator([
             'name' => 'foo',
@@ -45,7 +45,7 @@ class DocumentPayloadTest extends AbstractTestCase
         $this->assertEquals(
             [
                 'index' => 'foo',
-                'id' => 1,
+                'id' => '',
                 'body' => [],
             ],
             $payload->get()

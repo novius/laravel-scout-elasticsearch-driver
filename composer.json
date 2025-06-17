@@ -1,55 +1,77 @@
 {
-  "name": "novius/laravel-scout-elasticsearch-driver",
-  "description": "Elasticsearch Driver for Laravel Scout",
-  "keywords": [
-    "elastic",
-    "elasticsearch",
-    "driver",
-    "engine",
-    "laravel",
-    "scout",
-    "search"
-  ],
-  "license": "MIT",
-  "require": {
-    "php": "^8.3",
-    "elasticsearch/elasticsearch": "^8.9",
-    "laravel/framework": "^12.0",
-    "laravel/scout": "^10.14.1"
-  },
-  "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.14",
-    "phpunit/phpunit": "^11.5",
-    "orchestra/testbench": "^10.2"
-  },
-  "autoload": {
-    "psr-4": {
-      "Novius\\ScoutElastic\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Novius\\ScoutElastic\\Test\\": "tests"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Novius\\ScoutElastic\\ScoutElasticServiceProvider"
-      ]
-    }
-  },
-  "scripts": {
-    "lint": [
-      "php-cs-fixer fix --config .php-cs-fixer.php -vv --diff --allow-risky=yes --dry-run"
+    "name": "novius/laravel-scout-elasticsearch-driver",
+    "description": "Elasticsearch Driver for Laravel Scout",
+    "keywords": [
+        "elastic",
+        "elasticsearch",
+        "driver",
+        "engine",
+        "laravel",
+        "scout",
+        "search"
     ],
-    "test": "phpunit"
-  },
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "elasticsearch/elasticsearch": "^8.9",
+        "laravel/framework": "^11.0 | ^12.0",
+        "laravel/scout": "^10.14.1"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.1",
+        "laravel/pint": "^1.16",
+        "phpunit/phpunit": "^11.5",
+        "orchestra/testbench": "^9.12 | ^10.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Novius\\ScoutElastic\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Novius\\ScoutElastic\\Test\\": "tests",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Novius\\ScoutElastic\\ScoutElasticServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "cs-fix": [
+            "./vendor/bin/pint -v"
+        ],
+        "lint": [
+            "@composer cs-fix -- --test"
+        ],
+        "phpstan": [
+            "vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit 1G"
+        ],
+        "test": "phpunit",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

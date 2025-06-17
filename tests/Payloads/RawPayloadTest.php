@@ -7,9 +7,9 @@ use Novius\ScoutElastic\Test\AbstractTestCase;
 
 class RawPayloadTest extends AbstractTestCase
 {
-    public function testSet()
+    public function test_set()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->set('foo.bar', 10);
 
         $this->assertEquals(
@@ -18,9 +18,9 @@ class RawPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testSetIfNotEmpty()
+    public function test_set_if_not_empty()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->setIfNotEmpty('null', null)
             ->setIfNotEmpty('false', false)
             ->setIfNotEmpty('zero', 0)
@@ -34,9 +34,9 @@ class RawPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testSetIfNotNull()
+    public function test_set_if_not_null()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->setIfNotNull('null', null)
             ->setIfNotNull('false', false)
             ->setIfNotNull('zero', 0)
@@ -56,9 +56,9 @@ class RawPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testHas()
+    public function test_has()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->set('foo.bar', 100);
 
         $this->assertTrue($payload->has('foo'));
@@ -66,9 +66,9 @@ class RawPayloadTest extends AbstractTestCase
         $this->assertFalse($payload->has('not_exist'));
     }
 
-    public function testAdd()
+    public function test_add()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->set('foo', 0)
             ->add('foo', 1);
 
@@ -78,9 +78,9 @@ class RawPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testAddIfNotEmpty()
+    public function test_add_if_not_empty()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->addIfNotEmpty('foo', 0)
             ->addIfNotEmpty('foo', 1);
 
@@ -90,9 +90,9 @@ class RawPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testGet()
+    public function test_get()
     {
-        $payload = (new RawPayload())
+        $payload = (new RawPayload)
             ->set('foo.bar', 0);
 
         $this->assertEquals(

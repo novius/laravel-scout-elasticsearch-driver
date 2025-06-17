@@ -6,15 +6,12 @@ class Highlight
 {
     /**
      * The highlight array.
-     *
-     * @var array
      */
-    private $highlight;
+    private array $highlight;
 
     /**
      * Highlight constructor.
      *
-     * @param array $highlight
      * @return void
      */
     public function __construct(array $highlight)
@@ -25,19 +22,18 @@ class Highlight
     /**
      * Get a value.
      *
-     * @param string $key
      * @return mixed|string|null
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         $field = str_replace('AsString', '', $key);
 
         if (isset($this->highlight[$field])) {
             $value = $this->highlight[$field];
 
-            return $field == $key ? $value : implode(' ', $value);
-        } else {
-            return;
+            return $field === $key ? $value : implode(' ', $value);
         }
+
+        return null;
     }
 }

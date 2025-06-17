@@ -8,19 +8,13 @@ class RawPayload
 {
     /**
      * The payload.
-     *
-     * @var array
      */
-    protected $payload = [];
+    protected array $payload = [];
 
     /**
      * Set a value.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
      */
-    public function set($key, $value)
+    public function set(?string $key, $value): static
     {
         if (! is_null($key)) {
             Arr::set($this->payload, $key, $value);
@@ -31,12 +25,8 @@ class RawPayload
 
     /**
      * Set a value if it's not empty.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
      */
-    public function setIfNotEmpty($key, $value)
+    public function setIfNotEmpty(string $key, $value): static
     {
         if (empty($value)) {
             return $this;
@@ -47,12 +37,8 @@ class RawPayload
 
     /**
      * Set a value if it's not null.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
      */
-    public function setIfNotNull($key, $value)
+    public function setIfNotNull(string $key, $value): static
     {
         if (is_null($value)) {
             return $this;
@@ -63,23 +49,16 @@ class RawPayload
 
     /**
      * Checks that the payload key has a value.
-     *
-     * @param string $key
-     * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return Arr::has($this->payload, $key);
     }
 
     /**
      * Add a value.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
      */
-    public function add($key, $value)
+    public function add(?string $key, $value): static
     {
         if (! is_null($key)) {
             $currentValue = Arr::get($this->payload, $key, []);
@@ -98,12 +77,8 @@ class RawPayload
 
     /**
      * Add a value if it's not empty.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
      */
-    public function addIfNotEmpty($key, $value)
+    public function addIfNotEmpty(string $key, $value): static
     {
         if (empty($value)) {
             return $this;
@@ -114,12 +89,8 @@ class RawPayload
 
     /**
      * Get value.
-     *
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return mixed
      */
-    public function get($key = null, $default = null)
+    public function get(?string $key = null, $default = null)
     {
         return Arr::get($this->payload, $key, $default);
     }

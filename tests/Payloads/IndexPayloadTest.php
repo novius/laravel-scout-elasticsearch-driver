@@ -10,7 +10,7 @@ class IndexPayloadTest extends AbstractTestCase
 {
     use IndexConfigurator;
 
-    public function testDefault()
+    public function test_default()
     {
         $indexConfigurator = $this->mockIndexConfigurator();
         $payload = new IndexPayload($indexConfigurator);
@@ -21,7 +21,7 @@ class IndexPayloadTest extends AbstractTestCase
         );
     }
 
-    public function testSet()
+    public function test_set()
     {
         $indexConfigurator = $this->mockIndexConfigurator([
             'name' => 'foo',

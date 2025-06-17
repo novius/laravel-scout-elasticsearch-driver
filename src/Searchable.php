@@ -3,10 +3,15 @@
 namespace Novius\ScoutElastic;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable as SourceSearchable;
 use Novius\ScoutElastic\Builders\FilterBuilder;
 use Novius\ScoutElastic\Builders\SearchBuilder;
-use Laravel\Scout\Searchable as SourceSearchable;
+use RuntimeException;
 
+/**
+ * @mixin Model
+ */
 trait Searchable
 {
     use SourceSearchable {
@@ -16,24 +21,18 @@ trait Searchable
 
     /**
      * The highligths.
-     *
-     * @var \ScoutElastic\Highlight|null
      */
-    private $highlight = null;
+    private ?Highlight $highlight = null;
 
     /**
      * Defines if the model is searchable.
-     *
-     * @var bool
      */
-    protected static $isSearchableTraitBooted = false;
+    protected static bool $isSearchableTraitBooted = false;
 
     /**
      * Boot the trait.
-     *
-     * @return void
      */
-    public static function bootSearchable()
+    public static function bootSearchable(): void
     {
         if (static::$isSearchableTraitBooted) {
             return;
@@ -47,23 +46,23 @@ trait Searchable
     /**
      * Get the index configurator.
      *
-     * @return \ScoutElastic\IndexConfigurator
-     * @throws \Exception
+     *
+     * @throws Exception
      */
-    public function getIndexConfigurator()
+    public function getIndexConfigurator(): IndexConfigurator
     {
         static $indexConfigurator;
 
         if (! $indexConfigurator) {
             if (! isset($this->indexConfigurator) || empty($this->indexConfigurator)) {
-                throw new Exception(sprintf(
+                throw new RuntimeException(sprintf(
                     'An index configurator for the %s model is not specified.',
                     __CLASS__
                 ));
             }
 
             $indexConfiguratorClass = $this->indexConfigurator;
-            $indexConfigurator = new $indexConfiguratorClass();
+            $indexConfigurator = new $indexConfiguratorClass;
         }
 
         return $indexConfigurator;
@@ -71,10 +70,8 @@ trait Searchable
 
     /**
      * Get the search rules.
-     *
-     * @return array
      */
-    public function getSearchRules()
+    public function getSearchRules(): array
     {
         return isset($this->searchRules) && count($this->searchRules) > 0 ?
             $this->searchRules : [SearchRule::class];
@@ -83,30 +80,26 @@ trait Searchable
     /**
      * Execute the search.
      *
-     * @param string $query
-     * @param callable|null $callback
-     * @return \ScoutElastic\Builders\FilterBuilder|\ScoutElastic\Builders\SearchBuilder
+     * @param  string  $query
+     * @param  callable|null  $callback
      */
-    public static function search($query, $callback = null)
+    public static function search($query, $callback = null): SearchBuilder|FilterBuilder
     {
         $softDelete = static::usesSoftDelete() && config('scout.soft_delete', false);
 
-        if ($query == '*') {
-            return new FilterBuilder(new static(), $callback, $softDelete);
-        } else {
-            return new SearchBuilder(new static(), $query, $callback, $softDelete);
+        if ($query === '*') {
+            return new FilterBuilder(new static, $callback, $softDelete);
         }
+
+        return new SearchBuilder(new static, $query, $callback, $softDelete);
     }
 
     /**
      * Execute a raw search.
-     *
-     * @param array $query
-     * @return array
      */
-    public static function searchRaw(array $query)
+    public static function searchRaw(array $query): array
     {
-        $model = new static();
+        $model = new static;
 
         return $model->searchableUsing()
             ->searchRaw($model, $query)->asArray();
@@ -114,36 +107,29 @@ trait Searchable
 
     /**
      * Set the highlight attribute.
-     *
-     * @param \ScoutElastic\Highlight $value
-     * @return void
      */
-    public function setHighlightAttribute(Highlight $value)
+    public function setHighlightAttribute(Highlight $value): void
     {
         $this->highlight = $value;
     }
 
     /**
      * Get the highlight attribute.
-     *
-     * @return \ScoutElastic\Highlight|null
      */
-    public function getHighlightAttribute()
+    public function getHighlightAttribute(): ?Highlight
     {
         return $this->highlight;
     }
 
     /**
      * Get the key name used to index the model.
-     *
-     * @return mixed
      */
-    public function getScoutKeyName()
+    public function getScoutKeyName(): string
     {
         return $this->getKeyName();
     }
 
-    public function getScoutKey()
+    public function getScoutKey(): string
     {
         return $this->searchableAs().'_'.$this->getKey();
     }

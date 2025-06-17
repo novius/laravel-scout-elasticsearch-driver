@@ -7,9 +7,9 @@ trait HasProtectedKeys
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value)
+    public function set(?string $key, $value): static
     {
-        if (in_array($key, $this->protectedKeys)) {
+        if (in_array($key, $this->protectedKeys, true)) {
             return $this;
         }
 

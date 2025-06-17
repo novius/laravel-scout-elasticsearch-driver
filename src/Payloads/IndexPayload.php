@@ -5,6 +5,7 @@ namespace Novius\ScoutElastic\Payloads;
 use Exception;
 use Novius\ScoutElastic\IndexConfigurator;
 use Novius\ScoutElastic\Payloads\Features\HasProtectedKeys;
+use RuntimeException;
 
 class IndexPayload extends RawPayload
 {
@@ -12,25 +13,18 @@ class IndexPayload extends RawPayload
 
     /**
      * The protected keys.
-     *
-     * @var array
      */
-    protected $protectedKeys = [
+    protected array $protectedKeys = [
         'index',
     ];
 
     /**
      * The index configurator.
-     *
-     * @var \ScoutElastic\IndexConfigurator
      */
-    protected $indexConfigurator;
+    protected IndexConfigurator $indexConfigurator;
 
     /**
      * IndexPayload constructor.
-     *
-     * @param \ScoutElastic\IndexConfigurator $indexConfigurator
-     * @return void
      */
     public function __construct(IndexConfigurator $indexConfigurator, $isCreationPayload = false)
     {
@@ -41,12 +35,8 @@ class IndexPayload extends RawPayload
 
     /**
      * Use a specific index.
-     *
-     * @param string $indexName
-     * @return $this
-     * @throws \Exception
      */
-    public function useIndex(string $indexName)
+    public function useIndex(string $indexName): static
     {
         $this->payload['index'] = $indexName;
 
@@ -56,16 +46,15 @@ class IndexPayload extends RawPayload
     /**
      * Use an alias.
      *
-     * @param string $alias
-     * @return $this
-     * @throws \Exception
+     *
+     * @throws Exception
      */
-    public function useAlias($alias)
+    public function useAlias(string $alias): static
     {
         $aliasGetter = 'get'.ucfirst($alias).'Alias';
 
         if (! method_exists($this->indexConfigurator, $aliasGetter)) {
-            throw new Exception(sprintf(
+            throw new RuntimeException(sprintf(
                 'The index configurator %s doesn\'t have getter for the %s alias.',
                 get_class($this->indexConfigurator),
                 $alias

@@ -2,6 +2,8 @@
 
 namespace Novius\ScoutElastic\Console;
 
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Illuminate\Console\Command;
 use Novius\ScoutElastic\Console\Features\HasConfigurator;
 use Novius\ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
@@ -17,11 +19,10 @@ class ElasticIndexReindexCommand extends Command
     protected $description = 'Reindex an Elasticsearch index with 0 downtime';
 
     /**
-     * Handle the command.
-     *
-     * @return void
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->configurator = $this->getIndexConfigurator();
         $alias = $this->configurator->getName();
