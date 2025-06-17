@@ -109,7 +109,7 @@ trait Searchable
         $model = new static();
 
         return $model->searchableUsing()
-            ->searchRaw($model, $query);
+            ->searchRaw($model, $query)->asArray();
     }
 
     /**

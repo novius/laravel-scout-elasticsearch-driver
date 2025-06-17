@@ -20,7 +20,7 @@ trait HasConfigurator
             ->set('name', $alias)
             ->get();
 
-        if ($indices->existsAlias($existsPayload)) {
+        if ($indices->existsAlias($existsPayload)->asBool()) {
             return true;
         }
 
@@ -29,7 +29,7 @@ trait HasConfigurator
 
     protected function findIndexNameByAlias($aliasName)
     {
-        $aliases = ElasticClient::indices()->getAliases();
+        $aliases = ElasticClient::indices()->getAliases()->asArray();
         foreach ($aliases as $index => $aliasMapping) {
             if (array_key_exists($aliasName, $aliasMapping['aliases'])) {
                 return $index;
