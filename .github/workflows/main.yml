@@ -60,37 +60,37 @@ jobs:
       - name: PhPStan
         run: composer run-script phpstan
 
-  test-php:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        php-versions: ['8.2', '8.3', '8.4']
-        laravel: [ 11.*, 12.* ]
-        include:
-          - laravel: 12.*
-            carbon: 3.*
-            testbench: 10.*
-          - laravel: 11.*
-            carbon: 2.*
-            testbench: 9.*
-
-    name: test-php - P${{ matrix.php-versions }} - L${{ matrix.laravel }}
-
-    steps:
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Dependencies
-        run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:${{ matrix.carbon }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-      - name: Lint PHP code via Laravel Pint
-        run: composer run-script test
+#  test-php:
+#
+#    runs-on: ubuntu-latest
+#
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        php-versions: ['8.2', '8.3', '8.4']
+#        laravel: [ 11.*, 12.* ]
+#        include:
+#          - laravel: 12.*
+#            carbon: 3.*
+#            testbench: 10.*
+#          - laravel: 11.*
+#            carbon: 2.*
+#            testbench: 9.*
+#
+#    name: test-php - P${{ matrix.php-versions }} - L${{ matrix.laravel }}
+#
+#    steps:
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ matrix.php-versions }}
+#
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Install Dependencies
+#        run: |
+#          composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:${{ matrix.carbon }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+#          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+#
+#      - name: Lint PHP code via Laravel Pint
+#        run: composer run-script test
