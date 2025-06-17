@@ -1,5 +1,5 @@
 # Scout Elasticsearch Driver
-[![Travis](https://img.shields.io/travis/novius/laravel-scout-elasticsearch-driver.svg?maxAge=1800&style=flat-square)](https://travis-ci.org/novius/laravel-scout-elasticsearch-driver)
+[![Novius CI](https://github.com/novius/laravel-scout-elasticsearch-driveractions/workflows/main.yml/badge.svg?branch=master)](https://github.com/novius/laravel-scout-elasticsearch-driver/actions/workflows/main.yml)
 [![Packagist Release](https://img.shields.io/packagist/v/novius/laravel-scout-elasticsearch-driver.svg?maxAge=1800&style=flat-square)](https://packagist.org/packages/novius/laravel-scout-elasticsearch-driver)
 [![Licence](https://img.shields.io/packagist/l/novius/laravel-scout-elasticsearch-driver.svg?maxAge=1800&style=flat-square)](https://github.com/novius/laravel-scout-elasticsearch-driver#licence)
 
