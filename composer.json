@@ -1,53 +1,53 @@
 {
-  "name": "novius/laravel-scout-elasticsearch-driver",
-  "description": "Elasticsearch Driver for Laravel Scout",
-  "keywords": [
-    "elastic",
-    "elasticsearch",
-    "driver",
-    "engine",
-    "laravel",
-    "scout",
-    "search"
-  ],
-  "license": "MIT",
-  "require": {
-    "php": "^8.2",
-    "elasticsearch/elasticsearch": "^7.17",
-    "laravel/framework": "^10.0",
-    "laravel/scout": "^10.0"
-  },
-  "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.14",
-    "phpunit/phpunit": "^9.0",
-    "orchestra/testbench": "^8.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Novius\\ScoutElastic\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Novius\\ScoutElastic\\Test\\": "tests"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Novius\\ScoutElastic\\ScoutElasticServiceProvider"
-      ]
-    }
-  },
-  "scripts": {
-    "lint": [
-      "php-cs-fixer fix --config .php-cs-fixer.php -vv --diff --allow-risky=yes --dry-run"
+    "name": "novius/laravel-scout-elasticsearch-driver",
+    "description": "Elasticsearch Driver for Laravel Scout",
+    "keywords": [
+        "elastic",
+        "elasticsearch",
+        "driver",
+        "engine",
+        "laravel",
+        "scout",
+        "search"
     ],
-    "test": "phpunit"
-  },
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "elasticsearch/elasticsearch": "^7.17",
+        "laravel/framework": "^10.0",
+        "laravel/scout": "^10.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.14",
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Novius\\ScoutElastic\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Novius\\ScoutElastic\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Novius\\ScoutElastic\\ScoutElasticServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "lint": [
+            "php-cs-fixer fix --config .php-cs-fixer.php -vv --diff --allow-risky=yes --dry-run"
+        ],
+        "test": "phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
-  }
 }
