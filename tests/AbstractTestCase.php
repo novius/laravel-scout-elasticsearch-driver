@@ -2,6 +2,7 @@
 
 namespace Novius\ScoutElastic\Test;
 
+use Illuminate\Foundation\Application;
 use Novius\ScoutElastic\ScoutElasticServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -10,7 +11,7 @@ abstract class AbstractTestCase extends Orchestra
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return void
      */
     protected function getEnvironmentSetUp($app)
